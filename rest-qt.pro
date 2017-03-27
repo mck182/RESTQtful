@@ -7,12 +7,14 @@ TARGET = rest-qt
 CONFIG += console
 CONFIG -= app_bundle
 
+INCLUDEPATH += src
+
 TEMPLATE = app
 
 SOURCES += main.cpp \
-    serverbase.cpp \
-    networkmanager.cpp
+    src/serverbase.cpp \
+    src/networkmanager.cpp
 
 HEADERS += \
-    serverbase.h \
-    networkmanager.h
+    src/serverbase.h \
+    src/networkmanager.h
