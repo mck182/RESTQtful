@@ -25,6 +25,7 @@
 #include <QLatin1String>
 #include <QStringList>
 #include <QVariantMap>
+#include <QJsonObject>
 
 QT_BEGIN_NAMESPACE
 class QObject;
@@ -125,12 +126,29 @@ QVariantMap qobject2qvariant(const QObject *object,
                                     const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName")});
 
 /**
+* This method converts a QObject instance into a QJsonObject
+*
+* @param object The QObject instance to be converted.
+* @param ignoredProperties Properties that won't be converted.
+*/
+QJsonObject qobject2qjsonobject(const QObject *object,
+                                       const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName")});
+
+/**
 * This method converts a QVariantMap instance into a QObject
 *
 * @param variant Attributes to assign to the object.
 * @param object The QObject instance to update.
 */
 void qvariant2qobject(const QVariantMap &variant, QObject *object);
+
+/**
+* This method converts a QJsonObject instance into a QObject
+*
+* @param jsonObject The JSON object to convert to QObject
+* @param object The QObject instance to update.
+*/
+void qjsonobject2qobject(const QJsonObject &jsonObject, QObject *object);
 
 }
 

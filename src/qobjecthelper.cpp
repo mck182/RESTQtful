@@ -27,6 +27,7 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QObject>
+#include <QJsonObject>
 
 QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                                             const QStringList &ignoredProperties)
@@ -47,6 +48,12 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
     }
 
     return result;
+}
+
+QJsonObject QObjectHelper::qobject2qjsonobject(const QObject *object, const QStringList &ignoredProperties)
+{
+    const QVariantMap jsonMap = QObjectHelper::qobject2qvariant(object, ignoredProperties);
+    return QJsonObject::fromVariantMap(jsonMap);
 }
 
 void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object)
@@ -72,4 +79,10 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
             metaproperty.write(object, v);
         }
     }
+}
+
+void QObjectHelper::qjsonobject2qobject(const QJsonObject &jsonObject, QObject *object)
+{
+    const QVariantMap map = jsonObject.toVariantMap();
+    QObjectHelper::qvariant2qobject(map, object);
 }
