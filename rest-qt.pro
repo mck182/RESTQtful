@@ -14,10 +14,12 @@ TEMPLATE = app
 SOURCES += main.cpp \
     src/serverbase.cpp \
     src/networkmanager.cpp \
-    example/px500.cpp
+    example/px500.cpp \
+    src/qobjecthelper.cpp \
 
 HEADERS += \
     src/serverbase.h \
     src/networkmanager.h \
     example/px500.h \
-    example/px500secrets.h
+    example/px500secrets.h \
+    src/qobjecthelper.h \
