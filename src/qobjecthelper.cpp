@@ -3,6 +3,7 @@
   * Copyright (C) 2009 Till Adam <adam@kde.org>
   * Copyright (C) 2009 Flavio Castelli <flavio@castelli.name>
   * Copyright (C) 2016 Anton Kudryavtsev <a.kudryavtsev@netris.ru>
+  * Copyright (C) 2017 Martin Klapetek <mklapetek@kde.org>
   *
   * This library is free software; you can redistribute it and/or
   * modify it under the terms of the GNU Lesser General Public
@@ -26,19 +27,6 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 #include <QObject>
-
-class QObjectHelper::QObjectHelperPrivate {
-};
-
-QObjectHelper::QObjectHelper()
-  : d (new QObjectHelperPrivate)
-{
-}
-
-QObjectHelper::~QObjectHelper()
-{
-  delete d;
-}
 
 QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                                             const QStringList &ignoredProperties)
