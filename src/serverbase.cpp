@@ -37,7 +37,6 @@ void ServerBase::get(const QString &path,
     handleNetworkReply(reply, onCompleted);
 }
 
-
 QNetworkReply *ServerBase::post(const QString &path,
                                 const QJsonDocument &body,
                                 const Parameters &params,
@@ -118,5 +117,7 @@ void ServerBase::handleNetworkReply(QNetworkReply *reply, OnCompleted onComplete
         const QByteArray replyData = reply->readAll();
         const QJsonDocument json = QJsonDocument::fromJson(replyData);
         onCompleted(json, statusCode);
+
+        reply->deleteLater();
     });
 }
