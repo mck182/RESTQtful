@@ -16,6 +16,8 @@ SOURCES += main.cpp \
     src/networkmanager.cpp \
     example/px500.cpp \
     src/qobjecthelper.cpp \
+    example/pxphoto.cpp \
+    example/pxuser.cpp
 
 HEADERS += \
     src/serverbase.h \
@@ -23,3 +25,5 @@ HEADERS += \
     example/px500.h \
     example/px500secrets.h \
     src/qobjecthelper.h \
+    example/pxphoto.h \
+    example/pxuser.h
