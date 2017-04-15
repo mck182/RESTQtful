@@ -76,6 +76,10 @@ QJsonObject QObjectHelper::qobject2qjsonobject(const QObject *object, const QStr
 
 void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object)
 {
+    if (object == Q_NULLPTR) {
+        return;
+    }
+
     const QMetaObject *metaObject = object->metaObject();
     JsonDelimiter jsonDelimiter = (JsonDelimiter)object->property("jsonDelimiter").toInt();
 
