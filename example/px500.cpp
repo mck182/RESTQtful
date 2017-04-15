@@ -23,7 +23,7 @@ const Parameters Px500::requestHeaders() const
 void Px500::photos(OnCompleted onCompleted)
 {
     const Parameters params = Parameters {
-        { "rpp", "1" },
+        { "rpp", "10" },
         { "consumer_key", PX500_CONSUMER_KEY }
     };
 
