@@ -47,7 +47,14 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
         if (!metaproperty.isReadable() || ignoredProperties.contains(QLatin1String(name)))
             continue;
 
-        QVariant value = object->property(name);
+        QVariant value;
+
+        if (metaproperty.type() == QVariant::UserType) {
+           value = qobject2qvariant(object->property(name).value<QObject*>());
+        } else {
+           value = object->property(name);
+        }
+
         QString jsonKey;
 
         if (jsonDelimiter == QObjectHelper::Underscore) {
@@ -69,7 +76,7 @@ QJsonObject QObjectHelper::qobject2qjsonobject(const QObject *object, const QStr
 
 void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object)
 {
-    const QMetaObject *metaobject = object->metaObject();
+    const QMetaObject *metaObject = object->metaObject();
     JsonDelimiter jsonDelimiter = (JsonDelimiter)object->property("jsonDelimiter").toInt();
 
     for (QVariantMap::const_iterator iter = variant.constBegin(),
@@ -91,15 +98,27 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
         if (propertyIndex < 0)
             continue;
 
-        QMetaProperty metaproperty = metaobject->property(pIdx);
-        QVariant::Type type = metaproperty.type();
-        QVariant v(iter.value());
+        QMetaProperty metaProperty = metaObject->property(propertyIndex);
+        QVariant::Type type = metaProperty.type();
+        QVariant value(iter.value());
 
-        if (v.canConvert(type)) {
-            v.convert(type);
-            metaproperty.write(object, v);
-        } else if (QLatin1String("QVariant") == QLatin1String(metaproperty.typeName())) {
-            metaproperty.write(object, v);
+        if (type == QVariant::UserType && iter.value().type() == QVariant::Map) {
+            const int metaType = QMetaType::type(metaProperty.typeName());
+
+            if (metaType != QMetaType::UnknownType) {
+                const QMetaObject *innerMetaObject = QMetaType::metaObjectForType(metaType);
+                if (innerMetaObject) {
+                    // TODO: Should this sub-object be parented to the `object`?
+                    QObject *objectPtr = innerMetaObject->newInstance(Q_ARG(QObject*, 0));
+                    QObjectHelper::qvariant2qobject(iter.value().toMap(), objectPtr);
+                    metaProperty.write(object, QVariant::fromValue(objectPtr));
+                }
+            }
+        } else if (value.canConvert(type)) {
+            value.convert(type);
+            metaProperty.write(object, value);
+        } else if (QLatin1String(metaProperty.typeName()) == QLatin1String("QVariant")) {
+            metaProperty.write(object, value);
         }
     }
 }
