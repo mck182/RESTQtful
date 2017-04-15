@@ -116,6 +116,12 @@ QObjectHelper::qvariant2qobject(variant.toMap(), &person);
 */
 namespace QObjectHelper {
 
+enum JsonDelimiter {
+    Underscore,
+    CamelCase,
+    Dash
+};
+
 /**
 * This method converts a QObject instance into a QVariantMap.
 *
@@ -123,7 +129,8 @@ namespace QObjectHelper {
 * @param ignoredProperties Properties that won't be converted.
 */
 QVariantMap qobject2qvariant(const QObject *object,
-                                    const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName")});
+                                    const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName"),
+                                                                                       QStringLiteral("jsonDelimiter")});
 
 /**
 * This method converts a QObject instance into a QJsonObject

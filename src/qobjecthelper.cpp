@@ -28,6 +28,8 @@
 #include <QMetaProperty>
 #include <QObject>
 #include <QJsonObject>
+#include <QString>
+#include <QRegularExpression>
 
 QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                                             const QStringList &ignoredProperties)
@@ -35,6 +37,8 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
     QVariantMap result;
     const QMetaObject *metaobject = object->metaObject();
     int count = metaobject->propertyCount();
+
+    JsonDelimiter jsonDelimiter = (JsonDelimiter)object->property("jsonDelimiter").toInt();
 
     for (int i = 0; i < count; ++i) {
         QMetaProperty metaproperty = metaobject->property(i);
@@ -44,7 +48,14 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
             continue;
 
         QVariant value = object->property(name);
-        result[QLatin1String(name)] = value;
+        QString jsonKey;
+
+        if (jsonDelimiter == QObjectHelper::Underscore) {
+            jsonKey = QString(name).replace(QRegularExpression("([A-Z])"), "_\\1").toLower();
+        } else {
+            jsonKey = name;
+        }
+        result[jsonKey] = value;
     }
 
     return result;
@@ -59,13 +70,25 @@ QJsonObject QObjectHelper::qobject2qjsonobject(const QObject *object, const QStr
 void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object)
 {
     const QMetaObject *metaobject = object->metaObject();
+    JsonDelimiter jsonDelimiter = (JsonDelimiter)object->property("jsonDelimiter").toInt();
 
     for (QVariantMap::const_iterator iter = variant.constBegin(),
         end = variant.constEnd(); iter != end; ++iter) {
 
-        int pIdx = metaobject->indexOfProperty( iter.key().toLatin1() );
+        QString propertyName;
 
-        if (pIdx < 0)
+        if (jsonDelimiter == QObjectHelper::Underscore) {
+            auto parts = iter.key().split('_');
+            for (int i = 1; i < parts.size(); i++) {
+                parts[i].replace(0, 1, parts[i][0].toUpper());
+            }
+            propertyName = parts.join("");
+        } else {
+            propertyName = iter.key();
+        }
+
+        int propertyIndex = metaObject->indexOfProperty(propertyName.toLatin1());
+        if (propertyIndex < 0)
             continue;
 
         QMetaProperty metaproperty = metaobject->property(pIdx);
