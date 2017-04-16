@@ -1,29 +1,8 @@
-QT += core network
-QT -= gui
+TEMPLATE = subdirs
+CONFIG += ordered
 
-CONFIG += c++11
+SUBDIRS = \
+    src/restqtful.pro \
+    example
+example.depends = src
 
-TARGET = rest-qt
-CONFIG += console
-CONFIG -= app_bundle
-
-INCLUDEPATH += src
-
-TEMPLATE = app
-
-SOURCES += main.cpp \
-    src/serverbase.cpp \
-    src/networkmanager.cpp \
-    example/px500.cpp \
-    src/qobjecthelper.cpp \
-    example/pxphoto.cpp \
-    example/pxuser.cpp
-
-HEADERS += \
-    src/serverbase.h \
-    src/networkmanager.h \
-    example/px500.h \
-    example/px500secrets.h \
-    src/qobjecthelper.h \
-    example/pxphoto.h \
-    example/pxuser.h

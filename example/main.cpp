@@ -22,8 +22,8 @@
 #include <QJsonArray>
 
 #include "qobjecthelper.h"
-#include "example/pxphoto.h"
-#include "example/px500.h"
+#include "pxphoto.h"
+#include "px500.h"
 
 int main(int argc, char *argv[])
 {
@@ -46,6 +46,10 @@ int main(int argc, char *argv[])
             qDebug() << photo->id() << photo->name() << photo->user()->fullname();
         }
 
+
+//        pxServer->photoComments(198209741, [](const QJsonDocument &json, int statusCode) {
+//            qDebug() << "Comments for the photo:" << json;
+//        });
     });
 
     return a.exec();
