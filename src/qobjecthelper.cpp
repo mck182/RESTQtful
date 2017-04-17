@@ -31,6 +31,8 @@
 #include <QString>
 #include <QRegularExpression>
 
+#include <QDebug>
+
 QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                                             const QStringList &ignoredProperties)
 {
@@ -55,7 +57,14 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
         QVariant value;
 
         if (metaproperty.type() == QVariant::UserType) {
-           value = qobject2qvariant(object->property(name).value<QObject*>());
+            QVariant propertyObject = object->property(name);
+            QObject *subObject = qvariant_cast<QObject*>(propertyObject);
+            if (subObject == Q_NULLPTR) {
+                qWarning() << "Unable to extract" << propertyObject.typeName() << "from QVariant,"
+                           << "did you register it using qRegisterMetaType<T>(..)?";
+            } else {
+                value = qobject2qvariant(subObject);
+            }
         } else {
            value = object->property(name);
         }
