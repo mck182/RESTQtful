@@ -35,6 +35,11 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                                             const QStringList &ignoredProperties)
 {
     QVariantMap result;
+
+    if (object == Q_NULLPTR) {
+        return result;
+    }
+
     const QMetaObject *metaobject = object->metaObject();
     int count = metaobject->propertyCount();
 
