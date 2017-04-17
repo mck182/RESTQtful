@@ -120,6 +120,11 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
         QVariant::Type type = metaProperty.type();
         QVariant value(iter.value());
 
+        if (type == QVariant::Invalid) {
+            qWarning() << "The type" << type << "is unknwon, did you register it with"
+                       << "Q_DECLARE_METATYPE and qRegisterMetaType<>()?";
+        }
+
         if (type == QVariant::UserType && iter.value().type() == QVariant::Map) {
             const int metaType = QMetaType::type(metaProperty.typeName());
 
@@ -128,6 +133,10 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
                 if (innerMetaObject) {
                     // TODO: Should this sub-object be parented to the `object`?
                     QObject *objectPtr = innerMetaObject->newInstance(Q_ARG(QObject*, 0));
+                    if (objectPtr == Q_NULLPTR) {
+                        qWarning() << "Failed to construct subobject from QMetaObject,"
+                                   << "did you forget to mark the constructor with Q_INVOKABLE?";
+                    }
                     QObjectHelper::qvariant2qobject(iter.value().toMap(), objectPtr);
                     metaProperty.write(object, QVariant::fromValue(objectPtr));
                 }
