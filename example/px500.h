@@ -18,7 +18,7 @@
 #ifndef PX500_H
 #define PX500_H
 
-#include "serverbase.h"
+#include <serverbase.h>
 #include "px500secrets.h"
 
 class Px500 : public ServerBase

@@ -18,7 +18,8 @@
 #ifndef PXPHOTO_H
 #define PXPHOTO_H
 
-#include "restobject.h"
+#include <QObject>
+
 #include "pxuser.h"
 #include "qobjecthelper.h"
 
