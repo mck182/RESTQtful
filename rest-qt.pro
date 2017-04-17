@@ -3,6 +3,8 @@ CONFIG += ordered
 
 SUBDIRS = \
     src/restqtful.pro \
-    example
+    example \
+    tests
 example.depends = src
+tests.depends = src
 
