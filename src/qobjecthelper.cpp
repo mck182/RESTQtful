@@ -56,6 +56,8 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
 
         QVariant value;
 
+        // If the current property is a user (registered) type, take its object
+        // and recursively convert it to QVariantMap, use that as the value then
         if (metaproperty.type() == QVariant::UserType) {
             QVariant propertyObject = object->property(name);
             QObject *subObject = qvariant_cast<QObject*>(propertyObject);
@@ -66,11 +68,13 @@ QVariantMap QObjectHelper::qobject2qvariant(const QObject *object,
                 value = qobject2qvariant(subObject);
             }
         } else {
-           value = object->property(name);
+            value = object->property(name);
         }
 
         QString jsonKey;
 
+        // For underscore-separated JSON key names, take the property name
+        // and replace all capital letters with underscore followed by lower case letter
         if (jsonDelimiter == QObjectHelper::Underscore) {
             jsonKey = QString(name).replace(QRegularExpression("([A-Z])"), "_\\1").toLower();
         } else {
@@ -103,6 +107,8 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
         QString propertyName;
 
         if (jsonDelimiter == QObjectHelper::Underscore) {
+            // Replace underscores with camelCase so that it can
+            // find the object property names
             auto parts = iter.key().split('_');
             for (int i = 1; i < parts.size(); i++) {
                 parts[i].replace(0, 1, parts[i][0].toUpper());
@@ -125,6 +131,10 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
                        << "Q_DECLARE_METATYPE and qRegisterMetaType<>()?";
         }
 
+        // If the object property is a custom (registered) type and if the current
+        // JSON value is a map (a subobject), retrieve the metatype from the property,
+        // construct the object using QMetaObject and then recursively call this method.
+        // Then it will store the resulting new subobject in the current processed property
         if (type == QVariant::UserType && iter.value().type() == QVariant::Map) {
             const int metaType = QMetaType::type(metaProperty.typeName());
 
@@ -145,6 +155,7 @@ void QObjectHelper::qvariant2qobject(const QVariantMap &variant, QObject *object
             value.convert(type);
             metaProperty.write(object, value);
         } else if (QLatin1String(metaProperty.typeName()) == QLatin1String("QVariant")) {
+            // Set QVariants direclty (no need for conversions)
             metaProperty.write(object, value);
         }
     }
