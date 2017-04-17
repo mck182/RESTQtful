@@ -139,7 +139,8 @@ QVariantMap qobject2qvariant(const QObject *object,
 * @param ignoredProperties Properties that won't be converted.
 */
 QJsonObject qobject2qjsonobject(const QObject *object,
-                                       const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName")});
+                                       const QStringList &ignoredProperties = QStringList{QStringLiteral("objectName"),
+                                                                                          QStringLiteral("jsonDelimiter")});
 
 /**
 * This method converts a QVariantMap instance into a QObject
